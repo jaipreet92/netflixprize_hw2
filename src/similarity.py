@@ -40,15 +40,17 @@ def calculate_pearson_coefficient(user_to_movies_matrix):
     coefficients = np.empty((num_users, num_users))
 
     for i in range(num_users):
+        start_time = time.time()
         for j in range(num_users):
-            if i == j or coefficients[i][j] != 0.0:
+            if i == j:
                 continue
 
             similarity_i_j_top = 0.0
             similarity_i_j_bottom = 0.0
-            for k in range(num_movies):
-                rating_user_i = user_to_movies_matrix[i][k]
-                rating_user_j = user_to_movies_matrix[j][k]
+
+            for k in range(10):
+                rating_user_i = user_to_movies_matrix[i, k]
+                rating_user_j = user_to_movies_matrix[j, k]
 
                 if rating_user_i == 0.0 or rating_user_j == 0.0:
                     continue
@@ -61,13 +63,15 @@ def calculate_pearson_coefficient(user_to_movies_matrix):
                                                                             similarity_i_j_top)
 
             if similarity_i_j_bottom == 0.0:
-                print('Denominator when calculating similarity was 0 for users {}x{}'.format(i, j))
+                #print('Denominator when calculating similarity was 0 for users {}x{}'.format(i, j))
                 continue
-            coefficients[i][j] = similarity_i_j_top / math.sqrt(similarity_i_j_bottom)
+            coefficients[i, j] = similarity_i_j_top / math.sqrt(similarity_i_j_bottom)
+        print('Calculating similarity for {}x{} took {} seconds'.format(i, j, time.time() - start_time))
     return coefficients
 
 
-def _get_similarity(avg_rating_i, avg_rating_j, rating_user_i, rating_user_j, similarity_i_j_bottom, similarity_i_j_top):
+def _get_similarity(avg_rating_i, avg_rating_j, rating_user_i, rating_user_j, similarity_i_j_bottom,
+                    similarity_i_j_top):
     similarity_i_j_top += (rating_user_i - avg_rating_i) * (rating_user_j - avg_rating_j)
     similarity_i_j_bottom += math.pow(rating_user_i - avg_rating_i, 2) * math.pow(
         rating_user_j - avg_rating_j, 2)
