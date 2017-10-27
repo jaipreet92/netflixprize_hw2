@@ -18,6 +18,12 @@ movieid_to_idx = {}
 
 
 def build_user_x_movie_matrix(raw_training_data):
+    """
+    Constructs a user x movies matrix with all the ratings as the values. If there is no rating, the matrix
+    element is 0 valued. This is handled by the code further down calculating the coefficients
+    :param raw_training_data:
+    :return:
+    """
     row, column = raw_training_data.shape
 
     num_users = len(np.unique(raw_training_data[:,1], return_counts=True)[0])
