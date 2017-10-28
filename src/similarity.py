@@ -42,13 +42,13 @@ def calculate_pearson_coefficient(user_to_movies_matrix):
     for i in range(num_users):
         start_time = time.time()
         for j in range(num_users):
-            if i == j:
+            if i == j or coefficients[j, i] != 0.0:
                 continue
 
             similarity_i_j_top = 0.0
             similarity_i_j_bottom = 0.0
 
-            for k in range(10):
+            for k in range(num_movies):
                 rating_user_i = user_to_movies_matrix[i, k]
                 rating_user_j = user_to_movies_matrix[j, k]
 

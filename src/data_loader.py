@@ -6,11 +6,21 @@ def load_data_from_txt():
     print(raw_training_data.shape)
     np.save('../data/modified/raw_data_np.npy', raw_training_data)
 
+def load_testing_data_from_txt():
+    raw_testing_data = np.loadtxt('../data/TestingRatings.txt', delimiter=',', skiprows=1)
+    print(raw_testing_data.shape)
+    np.save('../data/modified/raw_testing_data_np.npy', raw_testing_data)
+
 
 def load_data_from_saved_py():
     raw_training_data = np.load('../data/modified/raw_data_np.npy')
     print(raw_training_data.shape)
     return raw_training_data
+
+def load_testing_data_from_saved_npy():
+    raw_testing_data = np.load('../data/modified/raw_testing_data_np.npy')
+    print(raw_testing_data.shape)
+    return raw_testing_data
 
 
 userid_to_idx = {}
