@@ -2,6 +2,8 @@ import data_loader
 import similarity
 import predict
 
+K=20
+
 if __name__ == "__main__":
     raw_training_data = data_loader.load_data_from_saved_py()
     raw_testing_data = data_loader.load_testing_data_from_saved_npy()
