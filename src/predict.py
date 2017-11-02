@@ -5,23 +5,19 @@ import math
 import kdtree
 
 ### THE K in our K-NN algorithm ###
-K = 5
+K = 20
 
 
 def _predict_rating(movie_id, user_id, coefficients, user_to_movies_matrix, movieid_to_idx=data_loader.movieid_to_idx,
                     userid_to_idx=data_loader.userid_to_idx):
     """
     For a given movie_id and user_id, gets the ratings of the K closest/most similar neighbouts and returns
-    the average of their ratings. If no nearest neighbours have ratings for the movie, then 0.0 is returned.
+    the average of their ratings. If no nearest neighbours have ratings for the movie, then average rating is returned.
     pa;j = va + Xni=1w(a; i)(v(i,j) - v(i, avg))
     :return:
     """
     movie_idx = int(movieid_to_idx[movie_id])
     user_idx = int(userid_to_idx[user_id])
-
-    if user_idx >= 2000 or movie_idx >= 100:
-        # print('We removed this user id or movie id from training set')
-        return None
 
     closest_neighbors_idxs = np.argsort(coefficients[user_idx, :])
 
@@ -83,12 +79,12 @@ def test_predictions(coefficients, raw_testing_data, user_to_movies_matrix):
             continue
         elif predicted_rating == 0.0:
             not_predicted_count += 1
-            print('Could not predict rating for userID {} and movieID {}'.format(user_id, movie_id))
+            print('Could not predict rating for userID {} and movieID {} and test record {}'.format(user_id, movie_id, i))
         else:
             predicted_count += 1
             rmse_sum += math.pow(predicted_rating - actual_rating, 2)
             mae_sum += math.fabs(predicted_rating - actual_rating)
-            print('Actual rating: {} Predicted rating: {}'.format(actual_rating, predicted_rating))
+            print('Actual rating: {} Predicted rating: {} test record {}'.format(actual_rating, predicted_rating, i))
 
     print('FINAL RESULTS')
     print('Not predicted values: {}'.format(not_predicted_count))
