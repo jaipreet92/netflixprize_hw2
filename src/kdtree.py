@@ -6,16 +6,13 @@ import math
 import kdtree_main
 import similarity
 
-# Map of user_id to its KDTree
-userid_to_kdtree_map = {}
-
 # Map of the user_id to its K nearest neighbours' indexes
 userid_to_knnidxs_map = {}
 
 
 def build_kdtree_for_user(user_to_movies_matrix, user_id):
-    if user_id in userid_to_kdtree_map and user_id in userid_to_knnidxs_map:
-        return userid_to_kdtree_map[user_id]
+    if user_id in userid_to_knnidxs_map:
+        return None
 
     user_idx = data_loader.userid_to_idx[user_id]
 
@@ -24,13 +21,14 @@ def build_kdtree_for_user(user_to_movies_matrix, user_id):
 
     # Create a KDTree with the movies the user has rated.
     user_kd_tree = KDTree(user_rated_movies)
-    userid_to_kdtree_map[user_id] = user_kd_tree
 
     # Get the indexes of the K nearest neighbours
     k_nn_distances, k_nn_idxs = user_kd_tree.query(user_rated_movies[user_idx], k=kdtree_main.K + 1)
+
+    # Cache the user's k nearest neighbors
     userid_to_knnidxs_map[user_id] = k_nn_idxs[1:]
 
-    return user_kd_tree
+    return None
 
 
 def get_deviation_from_mean_matrix(user_to_movies_matrix):
@@ -84,7 +82,7 @@ def predict_using_kdtree(raw_testing_data, user_to_movies_matrix):
             predicted_count += 1
             rmse_sum += math.pow(predicted_rating - actual_rating, 2)
             mae_sum += math.fabs(predicted_rating - actual_rating)
-            print('Actual rating: {} Predicted rating: {}'.format(actual_rating, predicted_rating))
+            print('Actual rating: {} Predicted rating: {} Test Record numner: {}'.format(actual_rating, predicted_rating, i))
 
     print('FINAL RESULTS')
     print('Not predicted values: {}'.format(not_predicted_count))
