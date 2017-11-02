@@ -24,6 +24,8 @@ def _get_n_most_rated_movies(user_to_movies_matrix, n=21):
     n_most_rated_movies_idxs = []
     for movie in n_most_rated_movies:
         n_most_rated_movies_idxs.append(movie[1])
+
+    print('Got {} most rated movies {}'.format(n, n_most_rated_movies_idxs))
     return n_most_rated_movies_idxs
 
 
