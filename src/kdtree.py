@@ -52,6 +52,7 @@ def get_deviation_from_mean_matrix(user_to_movies_matrix):
         user_avg_rating = similarity._get_avg_rating(i, user_to_movies_matrix)
         for j in range(num_movies):
             if user_to_movies_matrix[i, j] != 0.0:
+                # Only compute deviation if the user has rated the movie.
                 deviation_matrix[i, j] = user_to_movies_matrix[i, j] - user_avg_rating
     return deviation_matrix
 
