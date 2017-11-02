@@ -35,14 +35,14 @@ def calculate_pearson_coefficient(user_to_movies_matrix):
     """
     num_users, num_movies = user_to_movies_matrix.shape
 
-    # Change this to be lower than the lowest possible value of the coeffient
-    # Currently, this is initialized as 0.0
-    coefficients = np.empty((num_users, num_users))
+    starting_coefficient_value = -10000.0
+    # Initialize the coefficients to a very low value
+    coefficients = np.full((num_users, num_users), starting_coefficient_value)
 
     for i in range(num_users):
         start_time = time.time()
         for j in range(num_users):
-            if i == j or coefficients[j, i] != 0.0:
+            if i == j or coefficients[j, i] != starting_coefficient_value:
                 continue
 
             similarity_i_j_top = 0.0
