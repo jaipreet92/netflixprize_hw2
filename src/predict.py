@@ -77,7 +77,7 @@ def test_predictions(coefficients, raw_testing_data, user_to_movies_matrix):
 
         if predicted_rating is None:
             continue
-        elif predicted_rating == 0.0:
+        elif predicted_rating == 0.0 or np.isnan(predicted_rating):
             not_predicted_count += 1
             print('Could not predict rating for userID {} and movieID {} and test record {}'.format(user_id, movie_id, i))
         else:

@@ -43,6 +43,8 @@ def predict_using_balltree(raw_testing_data, absolute_deviation_matrix):
     print('FINAL RESULTS')
     print('Not predicted values: {}'.format(not_predicted_count))
     print('Predicted values: {}'.format(predicted_count))
+    print('MAE Sum: {}'.format(mae_sum))
+    print('RMSE Sum: {}'.format(rmse_sum))
     print('MAE: {}'.format(mae_sum / predicted_count))
     print('RMSE: {}'.format(rmse_sum / predicted_count))
 
@@ -64,7 +66,10 @@ def _predict_rating_using_balltree(movie_id, user_id, user_to_movies_deviations,
     else:
         mean_deviation = np.mean(neighbour_movie_deviations[np.where(neighbour_movie_deviations[:] != -10.0)])
         avg_rating = similarity._get_avg_rating(user_idx, kdtree_main.user_to_movies_matrix_global)
-        return (avg_rating + mean_deviation)
+        if np.isnan(mean_deviation):
+            return avg_rating
+        else:
+            return (avg_rating + mean_deviation)
 
 
 # Map of the user_id to its K nearest neighbours' indexes

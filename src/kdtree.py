@@ -88,6 +88,8 @@ def predict_using_kdtree(raw_testing_data, user_to_movies_matrix):
     print('FINAL RESULTS')
     print('Not predicted values: {}'.format(not_predicted_count))
     print('Predicted values: {}'.format(predicted_count))
+    print('MAE SUM: {}'.format(mae_sum))
+    print('RMSE SUM: {}'.format(rmse_sum))
     print('MAE: {}'.format(mae_sum / predicted_count))
     print('RMSE: {}'.format(rmse_sum / predicted_count))
 
@@ -107,4 +109,7 @@ def _predict_rating_using_kdtree(movie_id, user_id, user_to_movies_deviations, m
     else:
         mean_deviation = np.mean(neighbour_movie_deviations[np.where(neighbour_movie_deviations[:]!=-10.0)])
         avg_rating = similarity._get_avg_rating(user_idx, kdtree_main.user_to_movies_matrix_global)
-        return (avg_rating + mean_deviation)
+        if np.isnan(mean_deviation):
+            return avg_rating
+        else:
+            return (avg_rating + mean_deviation)
