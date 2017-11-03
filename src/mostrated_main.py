@@ -30,15 +30,19 @@ def _get_n_most_rated_movies(user_to_movies_matrix, n=21):
 
 
 if __name__ == "__main__":
+    # Load training and testing data
     raw_training_data = data_loader.load_data_from_saved_py()
     raw_testing_data = data_loader.load_testing_data_from_saved_npy()
+
+    # Form a users x movies matrix
     user_to_movies_matrix = data_loader.build_user_x_movie_matrix(raw_training_data)
 
+    # Filter the N most rated movies
     n_most_rated_movie_idxs = _get_n_most_rated_movies(user_to_movies_matrix)
-
     partial_user_to_movies_matrix = user_to_movies_matrix[:, n_most_rated_movie_idxs]
 
     pearson_coefficients = similarity.calculate_pearson_coefficient(partial_user_to_movies_matrix)
     np.save('../data/modified/most_common_pearson_coefficients.npy', pearson_coefficients)
 
-    predict.test_predictions(pearson_coefficients, raw_testing_data, partial_user_to_movies_matrix)
+    predict.test_predictions(pearson_coefficients, raw_testing_data, partial_user_to_movies_matrix,
+                             user_to_movies_matrix)

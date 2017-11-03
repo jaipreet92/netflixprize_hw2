@@ -9,7 +9,8 @@ import similarity
 K = 20
 
 
-def _predict_rating(movie_id, user_id, coefficients, user_to_movies_matrix, movieid_to_idx=data_loader.movieid_to_idx,
+def _predict_rating(movie_id, user_id, coefficients, partial_user_to_movies_matrix, full_user_to_movies_matrix,
+                    movieid_to_idx=data_loader.movieid_to_idx,
                     userid_to_idx=data_loader.userid_to_idx):
     """
     For a given movie_id and user_id, gets the ratings of the K closest/most similar neighbouts and returns
@@ -25,7 +26,7 @@ def _predict_rating(movie_id, user_id, coefficients, user_to_movies_matrix, movi
     k_nearest_ratings = []
     sum_of_weights = 0.0
     for neighbor_idx in reversed(closest_neighbors_idxs):
-        neighbor_rating = user_to_movies_matrix[neighbor_idx, movie_idx]
+        neighbor_rating = full_user_to_movies_matrix[neighbor_idx, movie_idx]
         neighbor_weight = coefficients[user_idx, neighbor_idx]
         if neighbor_rating != 0.0:
             k_nearest_ratings.append((neighbor_rating, neighbor_idx, neighbor_weight))
@@ -34,12 +35,12 @@ def _predict_rating(movie_id, user_id, coefficients, user_to_movies_matrix, movi
             break
 
     if len(k_nearest_ratings) != 0:
-        self_average = similarity._get_avg_rating(user_idx, user_to_movies_matrix)
+        self_average = similarity._get_avg_rating(user_idx, full_user_to_movies_matrix)
         predicted_rating_change = 0.0
         for near_rating_tuple in k_nearest_ratings:
             neighbor_rating = near_rating_tuple[0]
             neighbor_idx = near_rating_tuple[1]
-            neighbor_average = similarity._get_avg_rating(neighbor_idx, user_to_movies_matrix)
+            neighbor_average = similarity._get_avg_rating(neighbor_idx, full_user_to_movies_matrix)
             neighbour_similarity = near_rating_tuple[2]
 
             predicted_rating_change += (neighbour_similarity * (neighbor_rating - neighbor_average))
@@ -54,14 +55,14 @@ def _predict_rating(movie_id, user_id, coefficients, user_to_movies_matrix, movi
         return 0.0
 
 
-def test_predictions(coefficients, raw_testing_data, user_to_movies_matrix):
+def test_predictions(coefficients, raw_testing_data, partial_user_to_movies_matrix, full_user_to_movies_matrix):
     """
     Iterates through the test set, and predicts the rating for a user based on the ratings of the "K"
     nearest or most similar users for the required movie. The RMSE and MAE are aggregated as the predictions
     are made.
     :param coefficients:
     :param raw_testing_data:
-    :param user_to_movies_matrix:
+    :param partial_user_to_movies_matrix:
     """
     not_predicted_count = 0.0
     predicted_count = 0.0
@@ -74,7 +75,8 @@ def test_predictions(coefficients, raw_testing_data, user_to_movies_matrix):
         user_id = raw_testing_data[i, 1]
         actual_rating = raw_testing_data[i, 2]
 
-        predicted_rating = _predict_rating(movie_id, user_id, coefficients, user_to_movies_matrix)
+        predicted_rating = _predict_rating(movie_id, user_id, coefficients, partial_user_to_movies_matrix,
+                                           full_user_to_movies_matrix)
 
         if predicted_rating is None:
             continue
