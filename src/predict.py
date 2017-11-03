@@ -1,8 +1,9 @@
+import math
+
 import numpy as np
+
 import data_loader
 import similarity
-import math
-import kdtree
 
 ### THE K in our K-NN algorithm ###
 K = 20

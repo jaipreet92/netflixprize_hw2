@@ -39,5 +39,6 @@ if __name__ == "__main__":
     partial_user_to_movies_matrix = user_to_movies_matrix[:, n_most_rated_movie_idxs]
 
     pearson_coefficients = similarity.calculate_pearson_coefficient(partial_user_to_movies_matrix)
+    np.save('../data/modified/most_common_pearson_coefficients.npy', pearson_coefficients)
 
     predict.test_predictions(pearson_coefficients, raw_testing_data, partial_user_to_movies_matrix)

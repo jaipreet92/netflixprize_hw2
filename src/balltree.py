@@ -8,7 +8,7 @@ import balltree_main
 import similarity
 
 
-def predict_using_balltree(raw_testing_data, absolute_deviation_matrix):
+def predict_using_balltree(raw_testing_data, absolute_deviation_matrix, full_deviation_matrix):
     """
     Iterates through the test set, and predicts the rating for a user based on the ratings of the "K"
     nearest or most similar users for the required movie. The RMSE and MAE are aggregated as the predictions
@@ -28,7 +28,7 @@ def predict_using_balltree(raw_testing_data, absolute_deviation_matrix):
         user_id = raw_testing_data[i, 1]
         actual_rating = raw_testing_data[i, 2]
 
-        predicted_rating = _predict_rating_using_balltree(movie_id, user_id, absolute_deviation_matrix)
+        predicted_rating = _predict_rating_using_balltree(movie_id, user_id, absolute_deviation_matrix, full_deviation_matrix)
         if predicted_rating is None:
             not_predicted_count += 1
             print('Could not predict rating for userID {} and movieID {}'.format(user_id, movie_id))
@@ -49,7 +49,7 @@ def predict_using_balltree(raw_testing_data, absolute_deviation_matrix):
     print('RMSE: {}'.format(rmse_sum / predicted_count))
 
 
-def _predict_rating_using_balltree(movie_id, user_id, user_to_movies_deviations,
+def _predict_rating_using_balltree(movie_id, user_id, user_to_movies_deviations, full_deviation_matrix,
                                    movieid_to_idx=data_loader.movieid_to_idx,
                                    userid_to_idx=data_loader.userid_to_idx):
     user_idx = userid_to_idx[user_id]
@@ -59,7 +59,7 @@ def _predict_rating_using_balltree(movie_id, user_id, user_to_movies_deviations,
     build_balltree_for_user(user_to_movies_deviations, user_id)
     knn_idxs = userid_to_knnidxs_map[user_id]
 
-    neighbour_movie_deviations = user_to_movies_deviations[knn_idxs, movie_idx]
+    neighbour_movie_deviations = full_deviation_matrix[knn_idxs, movie_idx]
 
     if len(neighbour_movie_deviations) == 0:
         return None
