@@ -6,8 +6,8 @@ K = 20
 
 if __name__ == "__main__":
     # Load testing and training data
-    raw_training_data = data_loader.load_data_from_saved_py()
-    raw_testing_data = data_loader.load_testing_data_from_saved_npy()
+    raw_training_data = data_loader.load_data_from_txt()
+    raw_testing_data = data_loader.load_testing_data_from_txt()
 
     # Form a user x movies matrix
     user_to_movies_matrix = data_loader.build_user_x_movie_matrix(raw_training_data)
