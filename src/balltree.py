@@ -8,6 +8,36 @@ import balltree_main
 import similarity
 
 
+def predict_new_user_rating(absolute_deviation_matrix, full_deviation_matrix, raw_training_data):
+    not_predicted_count = 0.0
+    predicted_count = 0.0
+    predicted_ratings = []
+    all_movie_ids = np.unique(raw_training_data[:, 0].astype(int))
+    self_rated_movie_ids = raw_training_data[np.where(raw_training_data[:, 1] == 999999)][:, 0].astype(int)
+    for idx, movie_id in enumerate(all_movie_ids):
+        if movie_id in self_rated_movie_ids:
+            print('Ive already rated this movie')
+            continue
+
+        user_id = 999999
+        predicted_rating = _predict_rating_using_balltree(movie_id, user_id, absolute_deviation_matrix,
+                                                          full_deviation_matrix)
+        if predicted_rating is None:
+            not_predicted_count += 1
+            print('Could not predict rating for userID {} and movieID {}'.format(user_id, movie_id))
+        else:
+            predicted_count += 1
+            predicted_ratings.append((predicted_rating, movie_id))
+            print('Predicted rating for movieID {} for self is {}'.format(movie_id, predicted_rating))
+
+    print('FINAL RESULTS')
+    print('Not predicted values: {}'.format(not_predicted_count))
+    print('Predicted values: {}'.format(predicted_count))
+
+    # Sort predicted outputs
+    sorted_predicted_ratings = sorted(predicted_ratings, key=lambda x: x[0], reverse=True)
+    print('Top 10 predicted movies are {}'.format(sorted_predicted_ratings[0:10]))
+
 def predict_using_balltree(raw_testing_data, absolute_deviation_matrix, full_deviation_matrix):
     """
     Iterates through the test set, and predicts the rating for a user based on the ratings of the "K"
